@@ -1,5 +1,30 @@
 
 inch = 25.4;
+EZLOKHOLE = 9;
+m6hole = 6.6;
+
+module dog_holes(dogoffset)
+{
+    starty = 2 * inch;
+    increment = 4 * inch;
+    thend = 47.5 * inch;
+    for(y = [starty : increment : thend]){
+       translate([dogoffset,y,-.1])cylinder(r=(.75 * inch)/2,h=1 * inch);
+       }
+}
+
+module ezlock_holes(dogoffset)
+{
+    starty = 3 * inch;
+    increment = 4 * inch;
+    thend = 47.5 * inch;
+    for(y = [starty : increment : thend]){
+       translate([dogoffset - (2 * inch),y,-.1])cylinder(r=EZLOKHOLE/2,h=14);
+       translate([dogoffset + (2 * inch),y,-.1])cylinder(r=EZLOKHOLE/2,h=14);
+       translate([dogoffset - (2 * inch),y,13])cylinder(r=m6hole/2,h=10);
+       translate([dogoffset + (2 * inch),y,13])cylinder(r=m6hole/2,h=10);
+       }
+}
 
 module mount_holes(mountoffset)
 {
@@ -37,6 +62,8 @@ module left_slat()
        mount_holes(mountoffset1);
        mountoffset2 = mountoffset1 - (7.102 * inch);
        mount_holes(mountoffset2);
+       dog_holes((9.875 * inch) / 2);
+       ezlock_holes((9.875 * inch) / 2);
        }
 }
 

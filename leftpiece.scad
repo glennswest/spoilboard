@@ -163,7 +163,7 @@ module left_slat_bot1()
        }
 }
 
-left_slat();
+//left_slat();
 //projection(cut = true) left_slat_top1(); // top1
 //projection() translate([0,0,12]) left_slat_top2(); // top2
-//projection() translate([0,0,0]) left_slat_bot1(); // bot1
+projection() translate([9.875 * inch,0,0]) rotate([0,180,0]) left_slat_bot1(); // bot1

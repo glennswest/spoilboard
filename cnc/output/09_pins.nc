@@ -1,4 +1,4 @@
-(08_pins - spoilboard v0.1.1)
+(09_pins - spoilboard v0.2.0)
 (SPOILBOARD workholding grid + sheet-alignment fence)
 (Z0 = SPOILBOARD top - re-run after each resurface)
 (fence: d8 blind 10 pins tangent to the X and Y zero lines)

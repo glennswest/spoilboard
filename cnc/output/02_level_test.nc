@@ -1,6 +1,6 @@
-(01_level_test - spoilboard v0.1.1)
+(02_level_test - spoilboard v0.2.0)
 (DRY RUN - spindle OFF, Z held at +10, nothing is cut)
-(first + last pass of 03_level: all 4 XY extremes)
+(first + last pass of 04_level: all 4 XY extremes)
 (runs clean = the leveling cannot trip a soft limit)
 (SAFE START: full Z retract + XY move off the toolsetter)
 G21 G90 G94 G17

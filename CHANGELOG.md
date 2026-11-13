@@ -1,5 +1,17 @@
 # Changelog
 
+## [v0.2.0] — 2026-11-13
+
+### Added
+- **feat:** PROGRAMMED Z zeros (owner): 00_set_work_zero now sets
+  the full XYZ workspace with Z0 at the measured spoilboard surface
+  (G54 Z −13.650 — valid through the toolsetter offsets for any
+  M6-measured bit; stale after a re-skim). NEW 01_set_stock_zero
+  puts Z0 at the top of nominal ¾″ stock (+19.05); the owner
+  test-cuts, mics the actual, PARAMS stock.t gets the real number
+  (which also feeds thetable layer_t/ply_t). Files 01–09 renumbered
+  02–10.
+
 ## [v0.1.1] — 2026-11-13
 
 ### Changed

@@ -7,21 +7,26 @@ glennswest/thetable — everything that belongs to the machine rather
 than to any furniture project.
 
 ## Version
-- Current: **0.1.1**
+- Current: **0.2.0**
 - Version locations: this file, `CHANGELOG.md`, `cnc/generate.py`
 
 ## Cut files (`python3 cnc/generate.py` → `cnc/output/`, numbered
 stick-ready; `python3 cnc/stick.py` → /Volumes/MASSO/spoilboard/)
-- 00_set_work_zero — G54 XY0 → machine (18.184, 68.584); confirms
-  by feeding the tip DOWN TO Z0 at the zero point (M00), needs work
-  Z0 touched first
-- 01_level_test — dry run of the leveling extents
-- 02_toolchange_surfacing / 06_toolchange_quarter — toolsetter M6
-- 03_level / 04_level_deep / 05_level_edges — the skim (3 × 0.5,
+- 00_set_work_zero — programs the FULL workspace XYZ: Z0 = the
+  SPOILBOARD surface (G54 Z −13.650, measured; works through the
+  toolsetter offsets, no touching). STALE after any re-skim.
+- 01_set_stock_zero — Z0 = top of nominal ¾″ stock on the slats
+  (−13.650 + stock.t 19.05). Owner test-cuts, mics the real board →
+  stock.t ACTUAL → regenerate; the actual feeds thetable layer_t.
+- 02_level_test — dry run of the leveling extents
+- 03_toolchange_surfacing / 07_toolchange_quarter — toolsetter M6
+- 04_level / 05_level_deep / 06_level_edges — the skim (3 × 0.5,
   split so a finished pass is never repeated; SAME Z0 throughout)
-- 07_track_targets — M00 parks over the measured slot centers
-- 08_pins — fence pins + ¾″ dog holes + ∅9×15 M6 insert bores
-- 09_insert_guide — driver jig for the M6×13 inserts (cut ×2)
+- 08_track_targets — M00 parks over the measured slot centers
+- 09_pins — fence pins + ¾″ dog holes + ∅9×15 M6 insert bores
+- 10_insert_guide — driver jig for the M6×13 inserts (cut ×2)
+Both zero files confirm by feeding the tip down to work Z0 over the
+zero point (M00) — all three zeros proven visually.
 
 ## Machine facts (measured)
 - G54 XY0 = machine (18.184, 68.584); travel (1220.0, 1228.7);

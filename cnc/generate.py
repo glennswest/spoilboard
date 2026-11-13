@@ -12,15 +12,15 @@ Output files are STICK-READY: numbered from 00, copy them into the
 stick's /spoilboard folder (cnc/stick.py does it).
 
   00_set_work_zero      program G54 XY0 (machine 18.184, 68.584)
-  01_level_test         dry-run of the leveling extents, spindle off
-  02_toolchange_surfacing  M6 -> T2 (1in surfacing) via toolsetter
-  03_level              skim pass 1 (-0.5), full machine reach
-  04_level_deep         follow-on passes 2..3 - SAME Z0, no re-touch
-  05_level_edges        side strips, full 3-depth ladder
-  06_toolchange_quarter M6 -> T1 (1/4in) via toolsetter
-  07_track_targets      parks over the 4 slot centers (M00 pauses)
-  08_pins               fence pins + dog holes + M6 insert bores
-  09_insert_guide       driver jig for the M6x13 inserts (cut x2)
+  02_level_test         dry-run of the leveling extents, spindle off
+  03_toolchange_surfacing  M6 -> T2 (1in surfacing) via toolsetter
+  04_level              skim pass 1 (-0.5), full machine reach
+  05_level_deep         follow-on passes 2..3 - SAME Z0, no re-touch
+  06_level_edges        side strips, full 3-depth ladder
+  07_toolchange_quarter M6 -> T1 (1/4in) via toolsetter
+  08_track_targets      parks over the 4 slot centers (M00 pauses)
+  09_pins               fence pins + dog holes + M6 insert bores
+  10_insert_guide       driver jig for the M6x13 inserts (cut x2)
 
 Conventions (same as thetable): MASSO ISO dialect, Z0 = stock /
 spoilboard top, SAFE START (G53 Z0 -> XY -> only then Z down), every
@@ -30,7 +30,7 @@ spindle in reach. All dimensions mm. Pure Python 3, no deps.
 import math
 import os
 
-VERSION = "0.1.1"
+VERSION = "0.2.0"
 
 PARAMS = {
     # MACHINE (measured on the owner's Foreman Elite, 2026-11-11/12)
@@ -56,6 +56,10 @@ PARAMS = {
                "dog_d": 19.05, "dog_depth": 15.0,
                "insert_d": 9.0, "insert_depth": 15.0,
                "insert_dx": 50.8},
+    # STOCK on the slats: nominal 3/4in ply. The owner will test-cut
+    # and supply the ACTUAL mic'd thickness - update t, regenerate;
+    # that actual also feeds thetable's layer_t/ply_t.
+    "stock": {"t": 19.05},
     # leveling: 1in surfacing bit, 3 passes of 0.5 (split into
     # 03 = pass 1 and 04 = passes 2..3 so a finished first pass is
     # never repeated)
@@ -116,32 +120,49 @@ def _level_serp(p):
     return L
 
 
-def write_set_zero():
+def _zero_file(name, z, comments):
     org = PARAMS["cnc"]["origin"]
-    L = _hdr("00_set_work_zero", [
-        f"G54 XY0 -> machine X{org[0]:.3f} Y{org[1]:.3f}",
-        "slat corner + 15mm inset each axis - fence pins land in MDF",
-        "REQUIRES work Z0 already touched on the surface",
-        "confirmation: parks over XY0 then feeds DOWN to Z0 - the",
-        "bit tip should kiss the touch surface exactly at the zero",
-        "point. M00 pause: check all three zeros, CYCLE START parks",
-        "a Z soft limit here = work Z0 was never touched"])
+    L = _hdr(name, [
+        f"G54 -> machine X{org[0]:.3f} Y{org[1]:.3f} Z{z:.3f}",
+        "programs the FULL workspace - no touching needed",
+        "(Z works through the toolsetter tool offsets: any M6-",
+        "measured bit lands right)"] + comments + [
+        "confirmation: parks over XY0 then feeds DOWN to work Z0 -",
+        "the tip should kiss the expected surface at the zero point",
+        "M00: check all three zeros, CYCLE START parks front-center"])
     L += ["G21 G90",
-          f"G10 L2 P1 X{org[0]:.3f} Y{org[1]:.3f}",
+          f"G10 L2 P1 X{org[0]:.3f} Y{org[1]:.3f} Z{z:.3f}",
           "G53 Z0",
           "G0 X0.000 Y0.000",
           "G0 Z5.000",
           "G1 Z0.000 F300",
           "M00"] + _park() + ["M30"]
-    _write("00_set_work_zero", L)
+    _write(name, L)
+
+
+def write_set_zero():
+    cn = PARAMS["cnc"]
+    _zero_file("00_set_work_zero", cn["g54_z"], [
+        "Z0 = the SPOILBOARD surface (measured 2026-11-12,",
+        "-0.53740in on the F4 screen) - for slat jobs: 09_pins,",
+        "re-skims. STALE AFTER ANY RE-SKIM: re-touch, update g54_z,",
+        "regenerate"])
+    st = PARAMS["stock"]["t"]
+    _zero_file("01_set_stock_zero", cn["g54_z"] + st, [
+        f"Z0 = TOP of {st:.2f}mm stock on the slats (nominal 3/4in",
+        "board) - for sheet/part jobs. TEST then mic the real board,",
+        "set PARAMS stock.t to the ACTUAL, regenerate - the actual",
+        "also feeds thetable layer_t/ply_t. With no board loaded the",
+        f"confirm tip stops {st:.1f} above the slats - a visual gap",
+        "check"])
 
 
 def write_level_test():
     G = PARAMS["level"]
     x0, y0, rx, ry = _level_window()
-    L = _hdr("01_level_test", [
+    L = _hdr("02_level_test", [
         "DRY RUN - spindle OFF, Z held at +10, nothing is cut",
-        "first + last pass of 03_level: all 4 XY extremes",
+        "first + last pass of 04_level: all 4 XY extremes",
         "runs clean = the leveling cannot trip a soft limit",
         "SAFE START: full Z retract + XY move off the toolsetter"])
     L += ["G21 G90 G94 G17",
@@ -152,14 +173,14 @@ def write_level_test():
           f"G0 Y{ry:.3f}",
           f"G1 X{x0:.3f} F{G['feed']:.0f}",
           "G0 X0.000 Y0.000"] + _park() + ["M30"]
-    _write("01_level_test", L)
+    _write("02_level_test", L)
 
 
 def write_tool_changes():
     for name, tnum, bit in (
-            ("02_toolchange_surfacing", 2,
+            ("03_toolchange_surfacing", 2,
              "1in 25.4mm spoilboard surfacing bit"),
-            ("06_toolchange_quarter", 1,
+            ("07_toolchange_quarter", 1,
              "1/4in 6.35mm end mill - the everything bit")):
         L = _hdr(name, [
             f"M6 swap to T{tnum} = {bit}",
@@ -178,12 +199,12 @@ def write_level():
     G = PARAMS["level"]
     x0, y0, rx, ry = _level_window()
     rad = G["tool_d"] / 2.0
-    L = _hdr("03_level", [
+    L = _hdr("04_level", [
         f"SURFACING bit d{G['tool_d']:.1f} - run after "
-        "02_toolchange_surfacing",
+        "03_toolchange_surfacing",
         "Z0 = spoilboard HIGH point",
         f"pass 1 of {G['passes']} at Z{-G['doc']:.3f} - follow with "
-        "04_level_deep for the rest",
+        "05_level_deep for the rest",
         f"path X {x0:.0f}..{rx:.1f} Y {y0:.0f}..{ry:.1f} = machine "
         "reach - 1mm",
         f"coverage with this bit: X {x0 - rad:.1f}..{rx + rad:.1f} "
@@ -195,7 +216,7 @@ def write_level():
           f"M3 S{G['rpm']:.0f}"]
     L += _level_serp(1)
     L += ["M5"] + _park() + ["M30"]
-    _write("03_level", L)
+    _write("04_level", L)
 
 
 def write_level_deep():
@@ -206,10 +227,10 @@ def write_level_deep():
     doc = G["doc"]
     depths = ", ".join("%.1f" % (-p * doc)
                        for p in range(2, G["passes"] + 1))
-    L = _hdr("04_level_deep", [
+    L = _hdr("05_level_deep", [
         f"SURFACING bit d{G['tool_d']:.1f} - follow-on passes "
         f"2..{G['passes']}",
-        "SAME Z0 as 03_level - do NOT re-touch Z between the files",
+        "SAME Z0 as 04_level - do NOT re-touch Z between the files",
         f"depths {depths} -> {G['passes'] * doc:.1f} total below Z0",
         "SAFE START: full Z retract + XY move off the toolsetter"])
     L += ["G21 G90 G94 G17",
@@ -219,7 +240,7 @@ def write_level_deep():
     for p in range(2, G["passes"] + 1):
         L += _level_serp(p)
     L += ["M5"] + _park() + ["M30"]
-    _write("04_level_deep", L)
+    _write("05_level_deep", L)
 
 
 def write_level_edges():
@@ -229,14 +250,14 @@ def write_level_edges():
     groups = [("left", [x0, x0 + st]),
               ("right", [rx - 2 * st, rx - st, rx])]
     rad = G["tool_d"] / 2.0
-    L = _hdr("05_level_edges", [
+    L = _hdr("06_level_edges", [
         f"SURFACING bit d{G['tool_d']:.1f} - side touch-up, "
         "front-to-back passes",
-        "Z0 = the SAME leveling zero as 03_level",
+        "Z0 = the SAME leveling zero as 04_level",
         f"left strip covers X {x0 - rad:.1f}..{x0 + st + rad:.1f}; "
         f"right strip X {rx - 2 * st - rad:.1f}..{rx + rad:.1f}",
         f"{G['passes']} passes of {G['doc']:.1f} = "
-        f"{G['passes'] * G['doc']:.1f} total - matches 03_level",
+        f"{G['passes'] * G['doc']:.1f} total - matches 04_level",
         "SAFE START: full Z retract + XY move off the toolsetter"])
     L += ["G21 G90 G94 G17",
           "G53 Z0",
@@ -255,7 +276,7 @@ def write_level_edges():
                          f"F{G['feed']:.0f}")
                 at_far = not at_far
     L += ["M5"] + _park() + ["M30"]
-    _write("05_level_edges", L)
+    _write("06_level_edges", L)
 
 
 def _ctr(c):
@@ -299,7 +320,7 @@ def track_lines():
 def write_track_targets():
     tr = PARAMS["tracks"]
     if tr.get("lines"):
-        print("  07_track_targets skipped (lines fully measured)")
+        print("  08_track_targets skipped (lines fully measured)")
         return
     if tr.get("ref"):
         ri, rc = tr["ref"][0], _ctr(tr["ref"][1])
@@ -309,7 +330,7 @@ def write_track_targets():
         x1 = QCW_OUT_W + tr["track_gap"] / 2.0 - PARAMS["cnc"]["inset"]
         xs = [x1 + i * QCW_PITCH for i in range(4)]
         src = "manual p20 prediction - not measured yet"
-    L = _hdr("07_track_targets", [
+    L = _hdr("08_track_targets", [
         f"parks over the 4 inner slot centers - {src}",
         "M00 pause at each: eyeball how far the bit is off center",
         "CYCLE START moves on; jogging is locked while paused",
@@ -323,11 +344,11 @@ def write_track_targets():
             L.append("G0 Z10.000")
         L.append("M00")
     L += _park() + ["M30"]
-    _write("07_track_targets", L)
+    _write("08_track_targets", L)
     print(f"    ({src}: {', '.join(f'{x:.1f}' for x in xs)})")
 
 
-# ---------- bore/sheet emitter (for 08_pins + 09_insert_guide) -----
+# ---------- bore/sheet emitter (for 09_pins + 10_insert_guide) -----
 def _ctx(name, comments, rpm=None):
     G = PARAMS["gcode"]
     L = _hdr(name, comments + [
@@ -381,7 +402,7 @@ def _bore(L, rapid, up, cx, cy, d, final):
 def write_pins():
     P = PARAMS
     bed, tr = P["cnc"]["bed"], P["tracks"]
-    name = "08_pins"
+    name = "09_pins"
     L, rapid, up = _ctx(name, [
         "SPOILBOARD workholding grid + sheet-alignment fence",
         "Z0 = SPOILBOARD top - re-run after each resurface",
@@ -441,7 +462,7 @@ def write_pins():
                       f"(< {gd:.0f}) - SHIFT XY0, regenerate")
                 warned = True
     else:
-        print("  (08_pins: tracks not measured - fence pins only)")
+        print("  (09_pins: tracks not measured - fence pins only)")
     L += ["M5"] + _park() + ["M30"]
     _write(name, L)
     if warned:
@@ -466,7 +487,7 @@ def write_insert_guide():
     G = PARAMS["gcode"]
     td, r = G["tool_d"], G["tool_d"] / 2.0
     thru = -(18.0 + G["overcut"])
-    name = "09_insert_guide"
+    name = "10_insert_guide"
     L, rapid, up = _ctx(name, [
         "INSERT DRIVER GUIDE - cut x2 from any 18mm offcut, stack "
         "on d8 pins + glue = 36 tall",

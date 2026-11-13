@@ -1,6 +1,6 @@
-(04_level_deep - spoilboard v0.1.1)
+(05_level_deep - spoilboard v0.2.0)
 (SURFACING bit d25.4 - follow-on passes 2..3)
-(SAME Z0 as 03_level - do NOT re-touch Z between the files)
+(SAME Z0 as 04_level - do NOT re-touch Z between the files)
 (depths -1.0, -1.5 -> 1.5 total below Z0)
 (SAFE START: full Z retract + XY move off the toolsetter)
 G21 G90 G94 G17

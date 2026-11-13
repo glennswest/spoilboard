@@ -7,12 +7,14 @@ glennswest/thetable — everything that belongs to the machine rather
 than to any furniture project.
 
 ## Version
-- Current: **0.1.0**
+- Current: **0.1.1**
 - Version locations: this file, `CHANGELOG.md`, `cnc/generate.py`
 
 ## Cut files (`python3 cnc/generate.py` → `cnc/output/`, numbered
 stick-ready; `python3 cnc/stick.py` → /Volumes/MASSO/spoilboard/)
-- 00_set_work_zero — G54 XY0 → machine (18.184, 68.584); M00 confirm
+- 00_set_work_zero — G54 XY0 → machine (18.184, 68.584); confirms
+  by feeding the tip DOWN TO Z0 at the zero point (M00), needs work
+  Z0 touched first
 - 01_level_test — dry run of the leveling extents
 - 02_toolchange_surfacing / 06_toolchange_quarter — toolsetter M6
 - 03_level / 04_level_deep / 05_level_edges — the skim (3 × 0.5,

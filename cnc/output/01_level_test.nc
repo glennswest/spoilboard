@@ -1,4 +1,4 @@
-(01_level_test - spoilboard v0.1.0)
+(01_level_test - spoilboard v0.1.1)
 (DRY RUN - spindle OFF, Z held at +10, nothing is cut)
 (first + last pass of 03_level: all 4 XY extremes)
 (runs clean = the leveling cannot trip a soft limit)

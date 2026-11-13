@@ -1,4 +1,4 @@
-(04_level_deep - spoilboard v0.1.0)
+(04_level_deep - spoilboard v0.1.1)
 (SURFACING bit d25.4 - follow-on passes 2..3)
 (SAME Z0 as 03_level - do NOT re-touch Z between the files)
 (depths -1.0, -1.5 -> 1.5 total below Z0)

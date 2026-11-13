@@ -1,4 +1,4 @@
-(03_level - spoilboard v0.1.0)
+(03_level - spoilboard v0.1.1)
 (SURFACING bit d25.4 - run after 02_toolchange_surfacing)
 (Z0 = spoilboard HIGH point)
 (pass 1 of 3 at Z-0.500 - follow with 04_level_deep for the rest)

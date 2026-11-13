@@ -30,7 +30,7 @@ spindle in reach. All dimensions mm. Pure Python 3, no deps.
 import math
 import os
 
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 
 PARAMS = {
     # MACHINE (measured on the owner's Foreman Elite, 2026-11-11/12)
@@ -121,13 +121,17 @@ def write_set_zero():
     L = _hdr("00_set_work_zero", [
         f"G54 XY0 -> machine X{org[0]:.3f} Y{org[1]:.3f}",
         "slat corner + 15mm inset each axis - fence pins land in MDF",
-        "parks the bit OVER the new XY0 as confirmation -",
-        "M00 pause: check it, CYCLE START to park front-center",
-        "Z offset untouched: re-touch per bit/stock"])
+        "REQUIRES work Z0 already touched on the surface",
+        "confirmation: parks over XY0 then feeds DOWN to Z0 - the",
+        "bit tip should kiss the touch surface exactly at the zero",
+        "point. M00 pause: check all three zeros, CYCLE START parks",
+        "a Z soft limit here = work Z0 was never touched"])
     L += ["G21 G90",
           f"G10 L2 P1 X{org[0]:.3f} Y{org[1]:.3f}",
           "G53 Z0",
           "G0 X0.000 Y0.000",
+          "G0 Z5.000",
+          "G1 Z0.000 F300",
           "M00"] + _park() + ["M30"]
     _write("00_set_work_zero", L)
 

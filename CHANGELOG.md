@@ -1,5 +1,14 @@
 # Changelog
 
+## [v0.1.1] — 2026-11-13
+
+### Changed
+- **feat:** 00_set_work_zero confirmation now proves ALL zeros
+  (owner): after parking over XY0 it feeds down (F300) to work Z0 -
+  the bit tip kisses the touch surface exactly at the zero point,
+  M00, then parks. Requires Z0 touched first; a stale/missing Z
+  offset trips the soft limit instead of diving.
+
 ## [v0.1.0] — 2026-11-13
 
 ### Added

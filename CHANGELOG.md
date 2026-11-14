@@ -1,5 +1,19 @@
 # Changelog
 
+## [v0.3.0] — 2026-11-14
+
+### Added
+- **feat:** `print/` — 3D-printed ¾″ flip-registration dogs for the
+  crate1/crate2 full-sheet flip route (print TWO). Two-step design:
+  Ø19.0 × 15 bed section (snug in the ∅19.05 grid holes) + Ø19.2 × 17
+  panel section (0.15 clearance in the panel's ∅19.35 bores — tighter
+  registration than a ¾″ dowel's 0.3), 2 mm top chamfer, 0.5
+  elephant-foot relief, 32 total (17 stick-up = 4 proud of a 13
+  panel, 2 under the Z+6 rapid plane; never exceed 33). Parametric
+  `flip_dog.scad` + dependency-free `make_stl.py` emitting committed
+  print-ready `flip_dog.stl` and an 8 mm `flip_dog_test.stl` bed-fit
+  puck (print first, adjust diameters in 0.05 steps).
+
 ## [v0.2.0] — 2026-11-13
 
 ### Added

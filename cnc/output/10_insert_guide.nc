@@ -1,4 +1,4 @@
-(10_insert_guide - spoilboard v0.3.1)
+(10_insert_guide - spoilboard v0.3.2)
 (INSERT DRIVER GUIDE - cut x2 from any 18mm offcut, stack on d8 pins + glue = 36 tall)
 (set over a spoilboard d9 bore; the d10.2 center bore keeps the M6x13 insert + 6mm hex bit square while driving)
 (flush-drive until the insert disappears below the block)

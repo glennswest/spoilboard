@@ -1,4 +1,4 @@
-(03_toolchange_surfacing - spoilboard v0.3.1)
+(03_toolchange_surfacing - spoilboard v0.3.2)
 (M6 swap to T2 = 1in 25.4mm spoilboard surfacing bit)
 (TOOLSETTER measures the new bit - work Z0 is kept)
 (do NOT re-touch Z after this file)

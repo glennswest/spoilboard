@@ -1,5 +1,16 @@
 # Changelog
 
+## [v0.3.2] — 2026-11-16
+
+### Fixed
+- **fix:** the remaining hopping was the FENCE PINS (owner
+  rewound and watched from the start): they alternated bottom
+  edge / left edge, criss-crossing the full bed six times before
+  the grid even began. Now: bottom edge right-to-left, around
+  the corner, up the left edge, then the grid starts its first
+  line from the top - total rapid travel 21.1 -> 16.6 m and zero
+  cross-bed moves.
+
 ## [v0.3.1] — 2026-11-16
 
 ### Fixed

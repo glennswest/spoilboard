@@ -30,7 +30,7 @@ spindle in reach. All dimensions mm. Pure Python 3, no deps.
 import math
 import os
 
-VERSION = "0.3.1"
+VERSION = "0.3.2"
 
 PARAMS = {
     # MACHINE (measured on the owner's Foreman Elite, 2026-11-11/12)
@@ -410,9 +410,10 @@ def write_pins():
         "grid: 3/4in dog holes @4in on slat centerlines, d9x15 "
         "EZ-LOK M6 insert bores +-2in staggered - all BLIND 15"])
     svg = []
-    fence = []
-    for v in (80.0, 610.0, 1140.0):
-        fence += [(v, -4.0), (-4.0, v)]
+    # fence order: walk the bottom edge right-to-left, turn the
+    # corner, climb the left edge - no cross-bed criss-cross
+    fence = [(1140.0, -4.0), (610.0, -4.0), (80.0, -4.0),
+             (-4.0, 80.0), (-4.0, 610.0), (-4.0, 1140.0)]
     for (px, py) in fence:
         _bore(L, rapid, up, px, py, 8.0, -10.0)
         svg.append((px, py, 8.0))
@@ -457,7 +458,8 @@ def write_pins():
         for (x, y, d, dp) in bores:
             key = round(x if tr["dir"] == "y" else y, 1)
             cols.setdefault(key, []).append((x, y, d, dp))
-        upward = True
+        upward = False   # fence ends top-left; start the first
+                         # grid line from the top
         for key in sorted(cols):
             line = sorted(cols[key],
                           key=lambda b: b[1] if tr["dir"] == "y"

@@ -1,4 +1,4 @@
-(08_track_targets - spoilboard v0.3.1)
+(08_track_targets - spoilboard v0.3.2)
 (parks over the 4 inner slot centers - anchored to the measured ref touch)
 (M00 pause at each: eyeball how far the bit is off center)
 (CYCLE START moves on; jogging is locked while paused)

@@ -1,5 +1,16 @@
 # Changelog
 
+## [v0.3.3] — 2026-11-16
+
+### Fixed
+- **fix:** 3/4in dog holes left a STANDING CORE (owner's photo:
+  "big holes with a core :(") - _bore cut a single orbit at one
+  radius, clearing only an annulus; in blind holes the center
+  stub stays attached. Bores now spiral inside-out per depth
+  level (first orbit overlaps center; verified coverage 0 ->
+  9.53 >= hole radius). Re-running the file machines the
+  existing cores away.
+
 ## [v0.3.2] — 2026-11-16
 
 ### Fixed

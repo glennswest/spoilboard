@@ -30,7 +30,7 @@ spindle in reach. All dimensions mm. Pure Python 3, no deps.
 import math
 import os
 
-VERSION = "0.3.2"
+VERSION = "0.3.3"
 
 PARAMS = {
     # MACHINE (measured on the owner's Foreman Elite, 2026-11-11/12)
@@ -387,13 +387,27 @@ def _bore(L, rapid, up, cx, cy, d, final):
         up()
         return
     rb = (d - td) / 2.0
-    rapid(cx + rb, cy)
-    L.append(f"G1 Z0.000 F{G['plunge']:.0f}")
+    # radii from inside out; the FIRST orbit must overlap the
+    # center (r <= bit radius) or a core is left standing in
+    # blind holes (seen on the first 09_pins run)
+    radii = []
+    r = min(0.45 * td, rb)
+    while r < rb - 0.01:
+        radii.append(r)
+        r += 0.4 * td
+    radii.append(rb)
+    rapid(cx, cy)
     z = 0.0
     while z > final + 1e-6:
         z = max(final, z - min(G["stepdown"], 2.0))
-        L.append(f"G2 X{cx + rb:.3f} Y{cy:.3f} I{-rb:.3f} J0.000 "
-                 f"Z{z:.3f} F{G['plunge']:.0f}")
+        L.append(f"G1 X{cx:.3f} Y{cy:.3f} F{G['feed']:.0f}")
+        L.append(f"G1 Z{z:.3f} F{G['plunge']:.0f}")
+        for rr in radii:
+            L.append(f"G1 X{cx + rr:.3f} Y{cy:.3f} "
+                     f"F{G['feed']:.0f}")
+            L.append(f"G2 X{cx + rr:.3f} Y{cy:.3f} I{-rr:.3f} "
+                     f"J0.000 F{G['feed']:.0f}")
+    # finish pass at full depth, full diameter
     L.append(f"G2 X{cx + rb:.3f} Y{cy:.3f} I{-rb:.3f} J0.000 "
              f"F{G['feed']:.0f}")
     up()

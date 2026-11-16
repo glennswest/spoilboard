@@ -30,7 +30,7 @@ spindle in reach. All dimensions mm. Pure Python 3, no deps.
 import math
 import os
 
-VERSION = "0.3.0"
+VERSION = "0.3.1"
 
 PARAMS = {
     # MACHINE (measured on the owner's Foreman Elite, 2026-11-11/12)
@@ -435,23 +435,37 @@ def write_pins():
             glines = ([lines[0] - (tr["track_gap"] + ow[0])] + glines
                       + [lines[-1] + tr["track_gap"] + ow[1]])
         glines = [c for c in glines if -20.0 <= c <= bed + 20.0]
+        # collect the whole grid first, then emit as straight
+        # vertical lines serpentined across the bed - no per-hole
+        # side-hops (owner: "work its way up one slat")
+        bores = []
         for r in rows:
             v = 50.8
             while v <= bed - 50.8 + 0.01:
                 x, y = (v, r) if tr["dir"] == "x" else (r, v)
-                _bore(L, rapid, up, x, y, tr["dog_d"],
-                      -tr["dog_depth"])
-                svg.append((x, y, tr["dog_d"]))
+                bores.append((x, y, tr["dog_d"], tr["dog_depth"]))
                 if v + step / 2.0 <= bed - 50.8:
-                    for s in (-1.0, 1.0):
-                        rr = r + s * tr["insert_dx"]
+                    for sgn in (-1.0, 1.0):
+                        rr = r + sgn * tr["insert_dx"]
                         x, y = ((v + step / 2.0, rr)
                                 if tr["dir"] == "x"
                                 else (rr, v + step / 2.0))
-                        _bore(L, rapid, up, x, y, tr["insert_d"],
-                              -tr["insert_depth"])
-                        svg.append((x, y, tr["insert_d"]))
+                        bores.append((x, y, tr["insert_d"],
+                                      tr["insert_depth"]))
                 v += step
+        cols = {}
+        for (x, y, d, dp) in bores:
+            key = round(x if tr["dir"] == "y" else y, 1)
+            cols.setdefault(key, []).append((x, y, d, dp))
+        upward = True
+        for key in sorted(cols):
+            line = sorted(cols[key],
+                          key=lambda b: b[1] if tr["dir"] == "y"
+                          else b[0], reverse=not upward)
+            for (x, y, d, dp) in line:
+                _bore(L, rapid, up, x, y, d, -dp)
+                svg.append((x, y, d))
+            upward = not upward
         for (px, py) in fence:
             cross = py if tr["dir"] == "x" else px
             near = min(abs(cross - c) for c in glines) \

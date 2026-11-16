@@ -1,5 +1,15 @@
 # Changelog
 
+## [v0.3.1] — 2026-11-16
+
+### Fixed
+- **fix:** 09_pins drilling order (owner stopped the cut: "order
+  is all over the place") - the grid interleaved dog and insert
+  bores with +-100 side-hops at every hole. Now emitted as 15
+  straight vertical lines serpentined across the bed: monotone
+  climbs, two direction changes per slat instead of seventy.
+  RE-SYNC THE STICK before cutting.
+
 ## [v0.3.0] — 2026-11-14
 
 ### Added

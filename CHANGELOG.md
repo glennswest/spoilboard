@@ -1,5 +1,14 @@
 # Changelog
 
+## [v0.6.1] — 2026-11-18
+
+### Fixed
+- **fix:** crush-rib pin retuned 9.0->8.0 core (OD 9.7->8.7, fits
+  holes 8.1-8.7). The "9.15 still loose" report was a STALE SLICER
+  MESH - the owner's 3mf (saved 14:03) still held the 8.15 pin, so
+  8.15 was printed twice. Bit confirmed 1/4in; the thrice-machined
+  fence holes are realistically ~8.3-8.5, which 8.7-over-ribs covers.
+
 ## [v0.6.0] — 2026-11-18
 
 ### Changed

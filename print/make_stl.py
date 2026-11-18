@@ -24,11 +24,12 @@ SEGS = 128
 # upper section = the DATUM the panel edge bears on - keep it
 # 8.00 nominal (holes are tangent to the zero lines, so a fatter
 # pin shifts the fence line by half the oversize).
-FP_CORE_D = 9.0     # crush-rib fit: core diameter...
-FP_RIB = 0.35       # ...plus 6 ribs this proud (OD 9.7). Fits any
-                    # hole 9.1-9.7: ribs shave to size, self-center.
-                    # (8.05/8.15/9.15 plain pins all tested loose -
-                    # the holes are far over the nominal 8.0.)
+FP_CORE_D = 8.0     # crush-rib fit: core diameter...
+FP_RIB = 0.35       # ...plus 6 ribs this proud (OD 8.7). Fits any
+                    # hole 8.1-8.7: ribs shave to size, self-center.
+                    # (The "loose 9.15" scare was a stale slicer
+                    # mesh - the 3mf still held the 8.15 pin. Holes
+                    # are ~8.3-8.5 after three machining passes.)
 FP_DATUM_D = 8.00   # bearing section - the fence datum. Mic the
                     # printed datum; if it mics under 8.00, add the
                     # shortfall here (as-printed datum must BE 8.00).

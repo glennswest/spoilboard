@@ -7,7 +7,7 @@ glennswest/thetable — everything that belongs to the machine rather
 than to any furniture project.
 
 ## Version
-- Current: **0.6.0**
+- Current: **0.6.1**
 - Version locations: this file, `CHANGELOG.md`, `cnc/generate.py`
 
 ## Cut files (`python3 cnc/generate.py` → `cnc/output/`, numbered
@@ -41,12 +41,13 @@ zero point (M00) — all three zeros proven visually.
 - Workholding: brad/pin-nail stock to the slats in waste zones
   (owner has a pneumatic nailer) — nails ≥15 mm from any cut line;
   the 08 grid (dogs + inserts) is the screw-down alternative.
-- Fence pins (`print/`, v0.6.0): printed CRUSH-RIB pins for the
-  fence holes — 9.0 core + 6 ribs to OD 9.7 fits any hole 9.1-9.7
+- Fence pins (`print/`, v0.6.1): printed CRUSH-RIB pins for the
+  fence holes — 8.0 core + 6 ribs to OD 8.7 fits any hole 8.1-8.7
   (ribs shave to size, self-center) + 8.00 DATUM section above (the
   bearing surface IS the fence line); print SIX, test puck first.
-  NOTE the real holes measured FAR over the nominal 8.0 (9.15 pin
-  loose) — check the chucked bit is truly 6.35 before cutting parts.
+  LESSON: the "9.15 loose" scare was a stale mesh in the owner's
+  slicer 3mf — always DELETE + RE-IMPORT objects after regenerating
+  STLs (a 3mf embeds the mesh; it never follows the file).
 - Flip dogs (`print/`, v0.4.1): 3D-printed two-step ¾″ dogs for the
   crate full-sheet flip route — `flip_dog.stl` ×2 (Ø19.1×15 bed +
   Ø19.3×17 panel sections, 32 total; never exceed 33 = 18 stick-up),

@@ -24,8 +24,11 @@ SEGS = 128
 # upper section = the DATUM the panel edge bears on - keep it
 # 8.00 nominal (holes are tangent to the zero lines, so a fatter
 # pin shifts the fence line by half the oversize).
-FP_BED_D = 9.15     # hole-fit section (owner: 8.15 still loose
-                    # fully seated - holes are well over nominal)
+FP_CORE_D = 9.0     # crush-rib fit: core diameter...
+FP_RIB = 0.35       # ...plus 6 ribs this proud (OD 9.7). Fits any
+                    # hole 9.1-9.7: ribs shave to size, self-center.
+                    # (8.05/8.15/9.15 plain pins all tested loose -
+                    # the holes are far over the nominal 8.0.)
 FP_DATUM_D = 8.00   # bearing section - the fence datum. Mic the
                     # printed datum; if it mics under 8.00, add the
                     # shortfall here (as-printed datum must BE 8.00).
@@ -34,6 +37,47 @@ FP_UP_H = 15.0      # stick-up (panel 12-13 + margin)
 FP_CH = 1.2
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+
+
+def loft(rings):
+    """rings: list of same-length [(x,y,z)] loops bottom->top;
+    closed with flat caps (same triangle pattern as the revolve)."""
+    tris = []
+    n = len(rings[0])
+    c0 = (0.0, 0.0, rings[0][0][2])
+    for i in range(n):
+        a, b = rings[0][i], rings[0][(i + 1) % n]
+        tris.append((c0, b, a))
+    for k in range(len(rings) - 1):
+        lo, hi = rings[k], rings[k + 1]
+        for i in range(n):
+            j = (i + 1) % n
+            tris.append((lo[i], lo[j], hi[j]))
+            tris.append((lo[i], hi[j], hi[i]))
+    c1 = (0.0, 0.0, rings[-1][0][2])
+    for i in range(n):
+        a, b = rings[-1][i], rings[-1][(i + 1) % n]
+        tris.append((c1, a, b))
+    return tris
+
+
+def ribbed_ring(z, core_r, rib_h, scale=1.0, ribs=6, half_deg=8.0):
+    """Circle of core_r with `ribs` raised pads rib_h proud."""
+    pts = []
+    for i in range(SEGS):
+        th = 2 * math.pi * i / SEGS
+        deg = math.degrees(th) % (360.0 / ribs)
+        r = core_r + (rib_h if min(deg, 360.0 / ribs - deg) <= half_deg
+                      else 0.0)
+        r *= scale
+        pts.append((r * math.cos(th), r * math.sin(th), z))
+    return pts
+
+
+def circle_ring(z, r):
+    return [(r * math.cos(2 * math.pi * i / SEGS),
+             r * math.sin(2 * math.pi * i / SEGS), z)
+            for i in range(SEGS)]
 
 
 def solid_of_revolution(profile):
@@ -94,25 +138,24 @@ def main():
     ]
     write_stl(os.path.join(HERE, "flip_dog.stl"), solid_of_revolution(dog))
 
-    pin = [
-        (FP_BED_D / 2 - CH_BOT, 0.0),
-        (FP_BED_D / 2, CH_BOT),
-        (FP_BED_D / 2, FP_BED_H),
-        (FP_DATUM_D / 2, FP_BED_H),
-        (FP_DATUM_D / 2, FP_BED_H + FP_UP_H - FP_CH),
-        (FP_DATUM_D / 2 - FP_CH, FP_BED_H + FP_UP_H),
+    cr, rh = FP_CORE_D / 2.0, FP_RIB
+    pin_rings = [
+        ribbed_ring(0.0, cr, rh, scale=0.92),        # lead-in taper
+        ribbed_ring(1.5, cr, rh),
+        ribbed_ring(FP_BED_H, cr, rh),               # ribbed fit, 10 deep
+        circle_ring(FP_BED_H, FP_DATUM_D / 2.0),     # step to datum
+        circle_ring(FP_BED_H + FP_UP_H - FP_CH, FP_DATUM_D / 2.0),
+        circle_ring(FP_BED_H + FP_UP_H, FP_DATUM_D / 2.0 - FP_CH),
     ]
-    write_stl(os.path.join(HERE, "fence_pin.stl"),
-              solid_of_revolution(pin))
+    write_stl(os.path.join(HERE, "fence_pin.stl"), loft(pin_rings))
 
-    fpuck = [
-        (FP_BED_D / 2 - CH_BOT, 0.0),
-        (FP_BED_D / 2, CH_BOT),
-        (FP_BED_D / 2, 6.0),
-        (FP_BED_D / 2 - 1.0, 7.0),
+    fpuck_rings = [
+        ribbed_ring(0.0, cr, rh, scale=0.92),
+        ribbed_ring(1.5, cr, rh),
+        ribbed_ring(6.0, cr, rh),
+        ribbed_ring(7.0, cr, rh, scale=0.9),
     ]
-    write_stl(os.path.join(HERE, "fence_pin_test.stl"),
-              solid_of_revolution(fpuck))
+    write_stl(os.path.join(HERE, "fence_pin_test.stl"), loft(fpuck_rings))
 
     puck = [
         (BED_D / 2 - CH_BOT, 0.0),

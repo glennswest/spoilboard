@@ -1,5 +1,16 @@
 # Changelog
 
+## [v0.6.0] — 2026-11-18
+
+### Changed
+- **feat:** fence pin fit section is now CRUSH-RIB: 9.0 core + six
+  ribs 0.35 proud (9.7 over ribs, 0.92 lead-in taper). One print
+  fits any hole 9.1-9.7 - the ribs shave to size and self-center,
+  so the 8.00 datum stays on the fence line. Plain 8.05/8.15/9.15
+  pins all tested loose; the holes are far over the nominal 8.0,
+  which points at the CHUCKED BIT being over 6.35 (or heavy runout)
+  - VERIFY THE BIT before cutting crate2.
+
 ## [v0.5.0] — 2026-11-18
 
 ### Added

@@ -1,4 +1,4 @@
-(06_level_edges - spoilboard v0.3.3)
+(06_level_edges - spoilboard v0.4.1)
 (SURFACING bit d25.4 - side touch-up, front-to-back passes)
 (Z0 = the SAME leveling zero as 04_level)
 (left strip covers X -17.7..26.7; right strip X 1150.1..1213.5)

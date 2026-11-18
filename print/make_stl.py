@@ -11,8 +11,8 @@ import math
 import struct
 import os
 
-BED_D = 19.0     # bed-hole section (hole is 19.05)
-PANEL_D = 19.2   # panel-hole section (bore is 19.35)
+BED_D = 19.1     # bed-hole section (hole is 19.05; +0.1 fit comp, puck was loose)
+PANEL_D = 19.3   # panel-hole section (bore is 19.35; same +0.1 comp)
 BED_H = 15.0
 PANEL_H = 17.0   # total 32 = 17 stick-up; NEVER exceed 33 total
 CH_TOP = 2.0
@@ -24,8 +24,10 @@ SEGS = 128
 # upper section = the DATUM the panel edge bears on - keep it
 # 8.00 nominal (holes are tangent to the zero lines, so a fatter
 # pin shifts the fence line by half the oversize).
-FP_BED_D = 8.05     # hole-fit section (tune in 0.05 steps)
-FP_DATUM_D = 8.00   # bearing section - the fence datum
+FP_BED_D = 8.15     # hole-fit section (+0.1 comp, puck was loose)
+FP_DATUM_D = 8.00   # bearing section - the fence datum. Mic the
+                    # printed datum; if it mics under 8.00, add the
+                    # shortfall here (as-printed datum must BE 8.00).
 FP_BED_H = 10.0     # hole depth
 FP_UP_H = 15.0      # stick-up (panel 12-13 + margin)
 FP_CH = 1.2

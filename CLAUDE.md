@@ -7,7 +7,7 @@ glennswest/thetable — everything that belongs to the machine rather
 than to any furniture project.
 
 ## Version
-- Current: **0.3.3**
+- Current: **0.4.1**
 - Version locations: this file, `CHANGELOG.md`, `cnc/generate.py`
 
 ## Cut files (`python3 cnc/generate.py` → `cnc/output/`, numbered
@@ -41,10 +41,15 @@ zero point (M00) — all three zeros proven visually.
 - Workholding: brad/pin-nail stock to the slats in waste zones
   (owner has a pneumatic nailer) — nails ≥15 mm from any cut line;
   the 08 grid (dogs + inserts) is the screw-down alternative.
-- Flip dogs (`print/`, v0.3.0): 3D-printed two-step ¾″ dogs for the
-  crate full-sheet flip route — `flip_dog.stl` ×2 (Ø19.0×15 bed +
-  Ø19.2×17 panel sections, 32 total; never exceed 33 = 18 stick-up),
-  `flip_dog_test.stl` fit puck first. Params in flip_dog.scad /
+- Fence pins (`print/`, v0.4.1): printed two-step d8 pins for the
+  fence holes (shelf pins too loose) — 8.15 fit + 8.00 DATUM section
+  (the bearing surface IS the fence line: mic the printed datum, add
+  any shortfall to FP_DATUM_D); print SIX, test puck first.
+- Flip dogs (`print/`, v0.4.1): 3D-printed two-step ¾″ dogs for the
+  crate full-sheet flip route — `flip_dog.stl` ×2 (Ø19.1×15 bed +
+  Ø19.3×17 panel sections, 32 total; never exceed 33 = 18 stick-up),
+  `flip_dog_test.stl` fit puck first. All fit diameters carry +0.1
+  print comp (v0.4.1, pucks tested loose). Params in flip_dog.scad /
   make_stl.py (keep in sync); regenerate with `python3 print/make_stl.py`.
 
 ## Conventions

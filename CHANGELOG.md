@@ -1,5 +1,14 @@
 # Changelog
 
+## [v0.7.0] — 2026-11-18
+
+### Changed
+- **feat:** flip dog bed section is now CRUSH-RIB like the proven
+  fence pin: 19.05 core + 8 ribs to OD 19.75, fits any dog hole
+  19.15-19.75 and self-centers. Panel section stays PLAIN 19.3 -
+  the panel must drop onto two dogs at once in the flip, so it
+  keeps its designed clearance. flip_dog.scad synced.
+
 ## [v0.6.1] — 2026-11-18
 
 ### Fixed

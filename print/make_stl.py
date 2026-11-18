@@ -11,8 +11,13 @@ import math
 import struct
 import os
 
-BED_D = 19.1     # bed-hole section (hole is 19.05; +0.1 fit comp, puck was loose)
-PANEL_D = 19.3   # panel-hole section (bore is 19.35; same +0.1 comp)
+BED_CORE_D = 19.05  # crush-rib bed fit: core...
+BED_RIB = 0.35      # ...plus 8 ribs this proud (OD 19.75): fits
+                    # any hole 19.15-19.75, shaves to size (same
+                    # proven design as the fence pin, v0.7.0)
+PANEL_D = 19.3   # panel-hole section PLAIN (bore is 19.35): the
+                 # panel must DROP onto two dogs at once in the
+                 # flip, so this one keeps slight clearance
 BED_H = 15.0
 PANEL_H = 17.0   # total 32 = 17 stick-up; NEVER exceed 33 total
 CH_TOP = 2.0
@@ -129,15 +134,16 @@ def write_stl(path, tris):
 
 
 def main():
-    dog = [
-        (BED_D / 2 - CH_BOT, 0.0),
-        (BED_D / 2, CH_BOT),
-        (BED_D / 2, BED_H),
-        (PANEL_D / 2, BED_H),
-        (PANEL_D / 2, BED_H + PANEL_H - CH_TOP),
-        (PANEL_D / 2 - CH_TOP, BED_H + PANEL_H),
+    bc, bh = BED_CORE_D / 2.0, BED_RIB
+    dog_rings = [
+        ribbed_ring(0.0, bc, bh, scale=0.95, ribs=8),   # lead-in
+        ribbed_ring(1.5, bc, bh, ribs=8),
+        ribbed_ring(BED_H, bc, bh, ribs=8),             # ribbed bed
+        circle_ring(BED_H, PANEL_D / 2),                # plain panel
+        circle_ring(BED_H + PANEL_H - CH_TOP, PANEL_D / 2),
+        circle_ring(BED_H + PANEL_H, PANEL_D / 2 - CH_TOP),
     ]
-    write_stl(os.path.join(HERE, "flip_dog.stl"), solid_of_revolution(dog))
+    write_stl(os.path.join(HERE, "flip_dog.stl"), loft(dog_rings))
 
     cr, rh = FP_CORE_D / 2.0, FP_RIB
     pin_rings = [
@@ -158,14 +164,13 @@ def main():
     ]
     write_stl(os.path.join(HERE, "fence_pin_test.stl"), loft(fpuck_rings))
 
-    puck = [
-        (BED_D / 2 - CH_BOT, 0.0),
-        (BED_D / 2, CH_BOT),
-        (BED_D / 2, 7.0),
-        (BED_D / 2 - 1.0, 8.0),
+    puck_rings = [
+        ribbed_ring(0.0, bc, bh, scale=0.95, ribs=8),
+        ribbed_ring(1.5, bc, bh, ribs=8),
+        ribbed_ring(7.0, bc, bh, ribs=8),
+        ribbed_ring(8.0, bc, bh, scale=0.92, ribs=8),
     ]
-    write_stl(os.path.join(HERE, "flip_dog_test.stl"),
-              solid_of_revolution(puck))
+    write_stl(os.path.join(HERE, "flip_dog_test.stl"), loft(puck_rings))
 
     # PLUG GAUGES - stepped pucks that MEASURE the holes (no
     # calipers needed): push in gently until it stops; the first

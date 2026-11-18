@@ -16,8 +16,9 @@
 // flip_dog_test.stl (8 mm puck) first, test in a bed hole, and trim
 // bed_d / panel_d by 0.05 steps until snug (bed) / easy drop (panel).
 
-bed_d    = 19.1;   // bed-hole section diameter (hole is 19.05; +0.1 fit comp)
-panel_d  = 19.3;   // panel-hole section diameter (bore is 19.35; +0.1 comp)
+bed_core = 19.05;  // crush-rib bed: core diameter (hole nominal)
+bed_rib  = 0.35;   // 8 ribs this proud -> OD 19.75, fits 19.15-19.75
+panel_d  = 19.3;   // panel-hole section PLAIN (bore is 19.35)
 bed_h    = 15.0;   // bed hole depth
 panel_h  = 17.0;   // stick-up above the slat
 ch_top   = 2.0;    // top lead-in chamfer
@@ -25,11 +26,22 @@ ch_bot   = 0.5;    // elephant-foot relief
 $fn      = 128;
 
 module dog() {
+    // ribbed bed section: core + 8 crush ribs (shave to fit)
+    union() {
+        cylinder(d = bed_core, h = bed_h);
+        for (i = [0:7]) rotate([0, 0, i * 45])
+            translate([0, -1.25, 1.5])
+                cube([bed_core/2 + bed_rib, 2.5, bed_h - 1.5]);
+        dog_upper();
+    }
+}
+
+module dog_upper() {
     rotate_extrude() polygon([
         [0, 0],
-        [bed_d/2 - ch_bot, 0],
-        [bed_d/2, ch_bot],
-        [bed_d/2, bed_h],
+        [bed_core/2 - ch_bot, 0],
+        [bed_core/2, ch_bot],
+        [bed_core/2, bed_h],
         [panel_d/2, bed_h],
         [panel_d/2, bed_h + panel_h - ch_top],
         [panel_d/2 - ch_top, bed_h + panel_h],

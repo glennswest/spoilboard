@@ -7,7 +7,7 @@ glennswest/thetable — everything that belongs to the machine rather
 than to any furniture project.
 
 ## Version
-- Current: **0.6.1**
+- Current: **0.7.0**
 - Version locations: this file, `CHANGELOG.md`, `cnc/generate.py`
 
 ## Cut files (`python3 cnc/generate.py` → `cnc/output/`, numbered
@@ -48,12 +48,13 @@ zero point (M00) — all three zeros proven visually.
   LESSON: the "9.15 loose" scare was a stale mesh in the owner's
   slicer 3mf — always DELETE + RE-IMPORT objects after regenerating
   STLs (a 3mf embeds the mesh; it never follows the file).
-- Flip dogs (`print/`, v0.4.1): 3D-printed two-step ¾″ dogs for the
-  crate full-sheet flip route — `flip_dog.stl` ×2 (Ø19.1×15 bed +
-  Ø19.3×17 panel sections, 32 total; never exceed 33 = 18 stick-up),
-  `flip_dog_test.stl` fit puck first. All fit diameters carry +0.1
-  print comp (v0.4.1, pucks tested loose). Params in flip_dog.scad /
-  make_stl.py (keep in sync); regenerate with `python3 print/make_stl.py`.
+- Flip dogs (`print/`, v0.7.0): 3D-printed two-step ¾″ dogs for the
+  crate full-sheet flip route — `flip_dog.stl` ×2 (CRUSH-RIB bed:
+  19.05 core + 8 ribs to OD 19.75, fits holes 19.15-19.75; PLAIN
+  Ø19.3×17 panel section for drop-on clearance; 32 total, never
+  exceed 33 = 18 stick-up), `flip_dog_test.stl` fit puck first.
+  Params in flip_dog.scad / make_stl.py (keep in sync); regenerate
+  with `python3 print/make_stl.py`.
 
 ## Conventions
 - Same as thetable: mm, MASSO ISO dialect, Z0 = stock/spoilboard

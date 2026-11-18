@@ -24,7 +24,8 @@ SEGS = 128
 # upper section = the DATUM the panel edge bears on - keep it
 # 8.00 nominal (holes are tangent to the zero lines, so a fatter
 # pin shifts the fence line by half the oversize).
-FP_BED_D = 8.15     # hole-fit section (+0.1 comp, puck was loose)
+FP_BED_D = 9.15     # hole-fit section (owner: 8.15 still loose
+                    # fully seated - holes are well over nominal)
 FP_DATUM_D = 8.00   # bearing section - the fence datum. Mic the
                     # printed datum; if it mics under 8.00, add the
                     # shortfall here (as-printed datum must BE 8.00).
@@ -121,6 +122,31 @@ def main():
     ]
     write_stl(os.path.join(HERE, "flip_dog_test.stl"),
               solid_of_revolution(puck))
+
+    # PLUG GAUGES - stepped pucks that MEASURE the holes (no
+    # calipers needed): push in gently until it stops; the first
+    # band still showing above the surface = the hole is SMALLER
+    # than that band's diameter (and bigger than the band below).
+    # Bands small->big going up; each is labeled in the knob note
+    # printed below. Print one of each, flat side down, as modeled.
+    def gauge(name, bands, band_h, knob_d):
+        prof = [(bands[0] / 2 - CH_BOT, 0.0), (bands[0] / 2, CH_BOT)]
+        z = 0.0
+        for i, d in enumerate(bands):
+            if i:
+                prof.append((d / 2, z))
+            z += band_h
+            prof.append((d / 2, z))
+        prof += [(knob_d / 2, z), (knob_d / 2, z + 6.0),
+                 (knob_d / 2 - 1.0, z + 7.0)]
+        write_stl(os.path.join(HERE, name), solid_of_revolution(prof))
+        steps = " / ".join(f"{d:.2f}" for d in bands)
+        print(f"  {name}: bands bottom->top {steps} x {band_h} tall")
+
+    # fence holes are 10 deep: 5 x 2 mm bands cover 8.2-9.0
+    gauge("fence_gauge.stl", [8.2, 8.4, 8.6, 8.8, 9.0], 2.0, 14.0)
+    # dog holes are 15 deep: 5 x 3 mm bands cover 19.1-19.5
+    gauge("dog_gauge.stl", [19.1, 19.2, 19.3, 19.4, 19.5], 3.0, 26.0)
 
 
 if __name__ == "__main__":

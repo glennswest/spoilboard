@@ -1,5 +1,18 @@
 # Changelog
 
+## [v0.5.0] — 2026-11-18
+
+### Added
+- **feat:** printed PLUG GAUGES - stepped pucks that measure the
+  holes without calipers: `fence_gauge.stl` (bands 8.2-9.0 x 2) and
+  `dog_gauge.stl` (bands 19.1-19.5 x 3). Push in until it stops;
+  the first band still showing = hole is smaller than that band.
+
+### Changed
+- **fix:** fence pin fit section 8.15 -> 9.15 (owner: still loose
+  fully seated - the re-machined holes are well over nominal; the
+  gauges will pin down the real number). Datum stays 8.00.
+
 ## [v0.4.1] — 2026-11-18
 
 ### Fixed

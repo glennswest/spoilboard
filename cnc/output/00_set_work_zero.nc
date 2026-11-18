@@ -1,4 +1,4 @@
-(00_set_work_zero - spoilboard v0.4.1)
+(00_set_work_zero - spoilboard v0.5.0)
 (G54 -> machine X18.184 Y68.584 Z-13.650)
 (programs the FULL workspace - no touching needed)
 ((Z works through the toolsetter tool offsets: any M6-)

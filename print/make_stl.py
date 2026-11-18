@@ -19,6 +19,17 @@ CH_TOP = 2.0
 CH_BOT = 0.5
 SEGS = 128
 
+# FENCE PINS (owner: shelf d8 pins too loose): fit the d8 x 10
+# blind fence holes. Bottom section = snug hole fit (tune);
+# upper section = the DATUM the panel edge bears on - keep it
+# 8.00 nominal (holes are tangent to the zero lines, so a fatter
+# pin shifts the fence line by half the oversize).
+FP_BED_D = 8.05     # hole-fit section (tune in 0.05 steps)
+FP_DATUM_D = 8.00   # bearing section - the fence datum
+FP_BED_H = 10.0     # hole depth
+FP_UP_H = 15.0      # stick-up (panel 12-13 + margin)
+FP_CH = 1.2
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -79,6 +90,26 @@ def main():
         (PANEL_D / 2 - CH_TOP, BED_H + PANEL_H),
     ]
     write_stl(os.path.join(HERE, "flip_dog.stl"), solid_of_revolution(dog))
+
+    pin = [
+        (FP_BED_D / 2 - CH_BOT, 0.0),
+        (FP_BED_D / 2, CH_BOT),
+        (FP_BED_D / 2, FP_BED_H),
+        (FP_DATUM_D / 2, FP_BED_H),
+        (FP_DATUM_D / 2, FP_BED_H + FP_UP_H - FP_CH),
+        (FP_DATUM_D / 2 - FP_CH, FP_BED_H + FP_UP_H),
+    ]
+    write_stl(os.path.join(HERE, "fence_pin.stl"),
+              solid_of_revolution(pin))
+
+    fpuck = [
+        (FP_BED_D / 2 - CH_BOT, 0.0),
+        (FP_BED_D / 2, CH_BOT),
+        (FP_BED_D / 2, 6.0),
+        (FP_BED_D / 2 - 1.0, 7.0),
+    ]
+    write_stl(os.path.join(HERE, "fence_pin_test.stl"),
+              solid_of_revolution(fpuck))
 
     puck = [
         (BED_D / 2 - CH_BOT, 0.0),

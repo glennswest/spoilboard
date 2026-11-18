@@ -1,80 +1,55 @@
-# Changelog
+# spoilboard — Onefinity Foreman Elite machine + QCW spoilboard setup
 
-## [v0.3.3] — 2026-11-16
+Two things live here: the owner's QCW replacement-slat designs
+(OpenSCAD + SVG, from the official manual diagram) and, since
+2026-11-13, the MACHINE setup cut files extracted from
+glennswest/thetable — everything that belongs to the machine rather
+than to any furniture project.
 
-### Fixed
-- **fix:** 3/4in dog holes left a STANDING CORE (owner's photo:
-  "big holes with a core :(") - _bore cut a single orbit at one
-  radius, clearing only an annulus; in blind holes the center
-  stub stays attached. Bores now spiral inside-out per depth
-  level (first orbit overlaps center; verified coverage 0 ->
-  9.53 >= hole radius). Re-running the file machines the
-  existing cores away.
+## Version
+- Current: **0.4.0**
+- Version locations: this file, `CHANGELOG.md`, `cnc/generate.py`
 
-## [v0.3.2] — 2026-11-16
+## Cut files (`python3 cnc/generate.py` → `cnc/output/`, numbered
+stick-ready; `python3 cnc/stick.py` → /Volumes/MASSO/spoilboard/)
+- 00_set_work_zero — programs the FULL workspace XYZ: Z0 = the
+  SPOILBOARD surface (G54 Z −13.650, measured; works through the
+  toolsetter offsets, no touching). STALE after any re-skim.
+- 01_set_stock_zero — Z0 = top of nominal ¾″ stock on the slats
+  (−13.650 + stock.t 19.05). Owner test-cuts, mics the real board →
+  stock.t ACTUAL → regenerate; the actual feeds thetable layer_t.
+- 02_level_test — dry run of the leveling extents
+- 03_toolchange_surfacing / 07_toolchange_quarter — toolsetter M6
+- 04_level / 05_level_deep / 06_level_edges — the skim (3 × 0.5,
+  split so a finished pass is never repeated; SAME Z0 throughout)
+- 08_track_targets — M00 parks over the measured slot centers
+- 09_pins — fence pins + ¾″ dog holes + ∅9×15 M6 insert bores
+- 10_insert_guide — driver jig for the M6×13 inserts (cut ×2)
+Both zero files confirm by feeding the tip down to work Z0 over the
+zero point (M00) — all three zeros proven visually.
 
-### Fixed
-- **fix:** the remaining hopping was the FENCE PINS (owner
-  rewound and watched from the start): they alternated bottom
-  edge / left edge, criss-crossing the full bed six times before
-  the grid even began. Now: bottom edge right-to-left, around
-  the corner, up the left edge, then the grid starts its first
-  line from the top - total rapid travel 21.1 -> 16.6 m and zero
-  cross-bed moves.
+## Machine facts (measured)
+- G54 XY0 = machine (18.184, 68.584); travel (1220.0, 1228.7);
+  G54 Z ref −13.650 (slat top after the −1.5 skim; Masso F4 shows
+  inches). Park = machine (610, 30) at full height, every file.
+- Track anchor (2026-11-12): slot centers work X 227.9 / 470.6 /
+  713.3 / 956.0 (ref slot 1 = 227.871, manual-p20 pitch exact).
+- Tool table: T1 = ¼″ end mill, T2 = 1″ surfacing. Golden rules:
+  home WITH a bit chucked; after homing only change bits via M6; an
+  M6 to the already-loaded tool is ignored (swap away and back to
+  re-measure). SAFE START in every file: G53 Z0 → XY → only then Z.
+- Workholding: brad/pin-nail stock to the slats in waste zones
+  (owner has a pneumatic nailer) — nails ≥15 mm from any cut line;
+  the 08 grid (dogs + inserts) is the screw-down alternative.
+- Fence pins (`print/`, v0.4.0): printed two-step d8 pins for
+  the fence holes - 8.05 fit section + 8.00 datum section (the
+  bearing surface sets the fence line); test puck first.
+- Flip dogs (`print/`, v0.3.0): 3D-printed two-step ¾″ dogs for the
+  crate full-sheet flip route — `flip_dog.stl` ×2 (Ø19.0×15 bed +
+  Ø19.2×17 panel sections, 32 total; never exceed 33 = 18 stick-up),
+  `flip_dog_test.stl` fit puck first. Params in flip_dog.scad /
+  make_stl.py (keep in sync); regenerate with `python3 print/make_stl.py`.
 
-## [v0.3.1] — 2026-11-16
-
-### Fixed
-- **fix:** 09_pins drilling order (owner stopped the cut: "order
-  is all over the place") - the grid interleaved dog and insert
-  bores with +-100 side-hops at every hole. Now emitted as 15
-  straight vertical lines serpentined across the bed: monotone
-  climbs, two direction changes per slat instead of seventy.
-  RE-SYNC THE STICK before cutting.
-
-## [v0.3.0] — 2026-11-14
-
-### Added
-- **feat:** `print/` — 3D-printed ¾″ flip-registration dogs for the
-  crate1/crate2 full-sheet flip route (print TWO). Two-step design:
-  Ø19.0 × 15 bed section (snug in the ∅19.05 grid holes) + Ø19.2 × 17
-  panel section (0.15 clearance in the panel's ∅19.35 bores — tighter
-  registration than a ¾″ dowel's 0.3), 2 mm top chamfer, 0.5
-  elephant-foot relief, 32 total (17 stick-up = 4 proud of a 13
-  panel, 2 under the Z+6 rapid plane; never exceed 33). Parametric
-  `flip_dog.scad` + dependency-free `make_stl.py` emitting committed
-  print-ready `flip_dog.stl` and an 8 mm `flip_dog_test.stl` bed-fit
-  puck (print first, adjust diameters in 0.05 steps).
-
-## [v0.2.0] — 2026-11-13
-
-### Added
-- **feat:** PROGRAMMED Z zeros (owner): 00_set_work_zero now sets
-  the full XYZ workspace with Z0 at the measured spoilboard surface
-  (G54 Z −13.650 — valid through the toolsetter offsets for any
-  M6-measured bit; stale after a re-skim). NEW 01_set_stock_zero
-  puts Z0 at the top of nominal ¾″ stock (+19.05); the owner
-  test-cuts, mics the actual, PARAMS stock.t gets the real number
-  (which also feeds thetable layer_t/ply_t). Files 01–09 renumbered
-  02–10.
-
-## [v0.1.1] — 2026-11-13
-
-### Changed
-- **feat:** 00_set_work_zero confirmation now proves ALL zeros
-  (owner): after parking over XY0 it feeds down (F300) to work Z0 -
-  the bit tip kisses the touch surface exactly at the zero point,
-  M00, then parks. Requires Z0 touched first; a stale/missing Z
-  offset trips the soft limit instead of diving.
-
-## [v0.1.0] — 2026-11-13
-
-### Added
-- **feat:** machine + spoilboard setup cut files extracted from
-  glennswest/thetable v0.51.0 into their own repo (owner: each
-  project its own github + its own numbered folder on the stick):
-  00_set_work_zero … 09_insert_guide, all stick-ready numbered from
-  zero, SAFE START + front park in every file, track anchor and
-  measured machine geometry carried over. 08_pins verified
-  coordinate-identical (161 bores) against thetable's
-  spoilboard_pins. cnc/stick.py syncs /Volumes/MASSO/spoilboard/.
+## Conventions
+- Same as thetable: mm, MASSO ISO dialect, Z0 = stock/spoilboard
+  top, semver + changelog, no Claude attribution in commits.

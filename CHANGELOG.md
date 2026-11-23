@@ -1,5 +1,13 @@
 # Changelog
 
+## [v0.7.2] — 2026-11-23
+
+### Changed
+- **revert:** flip dog back to full height (17 panel, 32 total) -
+  owner: no need to shorten; the crate generators jump their
+  rapids over the dogs (crate v0.18.1+). Do not print the v0.7.1
+  short dog.
+
 ## [v0.7.1] — 2026-11-23
 
 ### Changed

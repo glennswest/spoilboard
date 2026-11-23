@@ -7,7 +7,7 @@ glennswest/thetable — everything that belongs to the machine rather
 than to any furniture project.
 
 ## Version
-- Current: **0.7.2**
+- Current: **0.8.0**
 - Version locations: this file, `CHANGELOG.md`, `cnc/generate.py`
 
 ## Cut files (`python3 cnc/generate.py` → `cnc/output/`, numbered

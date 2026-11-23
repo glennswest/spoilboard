@@ -1,5 +1,11 @@
 # Changelog
 
+## [v0.8.0] — 2026-11-23
+
+### Added
+- **feat:** M8/M9 on every cutting file - the coolant relay runs
+  the dust collection (matches crate v0.22.0 convention).
+
 ## [v0.7.2] — 2026-11-23
 
 ### Changed

@@ -1,4 +1,4 @@
-(05_level_deep - spoilboard v0.7.2)
+(05_level_deep - spoilboard v0.8.0)
 (SURFACING bit d25.4 - follow-on passes 2..3)
 (SAME Z0 as 04_level - do NOT re-touch Z between the files)
 (depths -1.0, -1.5 -> 1.5 total below Z0)
@@ -7,6 +7,7 @@ G21 G90 G94 G17
 G53 Z0
 G0 X-5.000 Y-5.000
 M3 S16000
+M8
 (pass 2 of 3 - Z-1.000)
 G0 Z6.00
 G0 X-5.000 Y-5.000
@@ -266,6 +267,7 @@ G1 X-5.000 F2500
 G1 Y1159.134 F2500
 G1 X1200.814 F2500
 M5
+M9
 G53 Z0
 G53 X610.000 Y30.000
 M30

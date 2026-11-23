@@ -1,4 +1,4 @@
-(04_level - spoilboard v0.7.2)
+(04_level - spoilboard v0.8.0)
 (SURFACING bit d25.4 - run after 03_toolchange_surfacing)
 (Z0 = spoilboard HIGH point)
 (pass 1 of 3 at Z-0.500 - follow with 05_level_deep for the rest)
@@ -9,6 +9,7 @@ G21 G90 G94 G17
 G53 Z0
 G0 X-5.000 Y-5.000
 M3 S16000
+M8
 (pass 1 of 3 - Z-0.500)
 G0 Z6.00
 G0 X-5.000 Y-5.000
@@ -139,6 +140,7 @@ G1 X-5.000 F2500
 G1 Y1159.134 F2500
 G1 X1200.814 F2500
 M5
+M9
 G53 Z0
 G53 X610.000 Y30.000
 M30

@@ -30,7 +30,7 @@ spindle in reach. All dimensions mm. Pure Python 3, no deps.
 import math
 import os
 
-VERSION = "0.7.2"
+VERSION = "0.8.0"
 
 PARAMS = {
     # MACHINE (measured on the owner's Foreman Elite, 2026-11-11/12)
@@ -213,9 +213,9 @@ def write_level():
     L += ["G21 G90 G94 G17",
           "G53 Z0",
           f"G0 X{x0:.3f} Y{y0:.3f}",
-          f"M3 S{G['rpm']:.0f}"]
+          f"M3 S{G['rpm']:.0f}", "M8"]
     L += _level_serp(1)
-    L += ["M5"] + _park() + ["M30"]
+    L += ["M5", "M9"] + _park() + ["M30"]
     _write("04_level", L)
 
 
@@ -236,10 +236,10 @@ def write_level_deep():
     L += ["G21 G90 G94 G17",
           "G53 Z0",
           f"G0 X{x0:.3f} Y{y0:.3f}",
-          f"M3 S{G['rpm']:.0f}"]
+          f"M3 S{G['rpm']:.0f}", "M8"]
     for p in range(2, G["passes"] + 1):
         L += _level_serp(p)
-    L += ["M5"] + _park() + ["M30"]
+    L += ["M5", "M9"] + _park() + ["M30"]
     _write("05_level_deep", L)
 
 
@@ -262,7 +262,7 @@ def write_level_edges():
     L += ["G21 G90 G94 G17",
           "G53 Z0",
           f"G0 X{x0:.3f} Y{y0:.3f}",
-          f"M3 S{G['rpm']:.0f}"]
+          f"M3 S{G['rpm']:.0f}", "M8"]
     for p in range(1, G["passes"] + 1):
         for _, cols in groups:
             L += ["G0 Z6.00",
@@ -275,7 +275,7 @@ def write_level_edges():
                 L.append(f"G1 Y{y0 if at_far else ry:.3f} "
                          f"F{G['feed']:.0f}")
                 at_far = not at_far
-    L += ["M5"] + _park() + ["M30"]
+    L += ["M5", "M9"] + _park() + ["M30"]
     _write("06_level_edges", L)
 
 
@@ -356,7 +356,7 @@ def _ctx(name, comments, rpm=None):
         "SAFE START: full Z retract, XY move, only then Z down"])
     L += ["G21 G90 G94 G17",
           "G53 Z0",
-          f"M3 S{(rpm or G['rpm']):.0f}"]
+          f"M3 S{(rpm or G['rpm']):.0f}", "M8"]
     first = [True]
 
     def rapid(x, y):
@@ -493,7 +493,7 @@ def write_pins():
                 warned = True
     else:
         print("  (09_pins: tracks not measured - fence pins only)")
-    L += ["M5"] + _park() + ["M30"]
+    L += ["M5", "M9"] + _park() + ["M30"]
     _write(name, L)
     if warned:
         print("    *** DO NOT RUN 08 until the guard is clear")
@@ -550,7 +550,7 @@ def write_insert_guide():
                 L.append(f"G1 Z{z:.3f} F{G['plunge']:.0f}")
             L.append(f"G1 X{ex:.3f} Y{ey:.3f} F{G['feed']:.0f}")
         up()
-    L += ["M5"] + _park() + ["M30"]
+    L += ["M5", "M9"] + _park() + ["M30"]
     _write(name, L)
 
 

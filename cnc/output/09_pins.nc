@@ -1,4 +1,4 @@
-(09_pins - spoilboard v0.7.2)
+(09_pins - spoilboard v0.8.0)
 (SPOILBOARD workholding grid + sheet-alignment fence)
 (Z0 = SPOILBOARD top - re-run after each resurface)
 (fence: d8 blind 10 pins tangent to the X and Y zero lines)
@@ -8,6 +8,7 @@
 G21 G90 G94 G17
 G53 Z0
 M3 S18000
+M8
 G0 X1140.000 Y-4.000
 G0 Z6.00
 G1 X1140.000 Y-4.000 F1800
@@ -7333,6 +7334,7 @@ G2 X1143.768 Y101.600 I-1.325 J0.000 F1800
 G2 X1143.768 Y101.600 I-1.325 J0.000 F1800
 G0 Z6.00
 M5
+M9
 G53 Z0
 G53 X610.000 Y30.000
 M30

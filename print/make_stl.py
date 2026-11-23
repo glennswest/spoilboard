@@ -19,7 +19,8 @@ PANEL_D = 19.3   # panel-hole section PLAIN (bore is 19.35): the
                  # panel must DROP onto two dogs at once in the
                  # flip, so this one keeps slight clearance
 BED_H = 15.0
-PANEL_H = 17.0   # total 32 = 17 stick-up; NEVER exceed 33 total
+PANEL_H = 14.0   # total 29 = 14 stick-up: panel 12 + 2 proud,
+                 # rapids at Z+6 clear by ~4 (was 17, ~1 clearance)
 CH_TOP = 2.0
 CH_BOT = 0.5
 SEGS = 128

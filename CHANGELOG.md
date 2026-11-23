@@ -1,5 +1,12 @@
 # Changelog
 
+## [v0.7.1] — 2026-11-23
+
+### Changed
+- **fix:** flip dog panel section 17 -> 14 tall (total 29): with
+  12mm crate stock the dog now stands ~2 proud of the panel and
+  the Z+6 rapid plane clears by ~4 instead of ~1. Reprint 2.
+
 ## [v0.7.0] — 2026-11-18
 
 ### Changed

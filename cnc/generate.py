@@ -30,7 +30,7 @@ spindle in reach. All dimensions mm. Pure Python 3, no deps.
 import math
 import os
 
-VERSION = "0.7.0"
+VERSION = "0.7.1"
 
 PARAMS = {
     # MACHINE (measured on the owner's Foreman Elite, 2026-11-11/12)

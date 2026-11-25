@@ -34,6 +34,12 @@ zero point (M00) — all three zeros proven visually.
   inches). Park = machine (610, 30) at full height, every file.
 - Track anchor (2026-11-12): slot centers work X 227.9 / 470.6 /
   713.3 / 956.0 (ref slot 1 = 227.871, manual-p20 pitch exact).
+- TOOLING DOCTRINE (owner, 2026-11-24): ONE bit - the ¼″ downcut
+  - for every cut file until the ATC upgrade (new controller +
+  stand); compression bits / T1-T2 file splits are shelved until
+  then. Pocket-dominated sheets favor downcut; thru-edge quality
+  comes from the 1.3 overcut (slat-backed exit), finish skims,
+  triangle tabs and 2500 feed.
 - Tool table: T1 = ¼″ end mill, T2 = 1″ surfacing. Golden rules:
   home WITH a bit chucked; after homing only change bits via M6; an
   M6 to the already-loaded tool is ignored (swap away and back to

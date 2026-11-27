@@ -1,7 +1,7 @@
-(04_level - spoilboard v0.8.0)
+(04_level - spoilboard v0.9.0)
 (SURFACING bit d25.4 - run after 03_toolchange_surfacing)
 (Z0 = spoilboard HIGH point)
-(pass 1 of 3 at Z-0.500 - follow with 05_level_deep for the rest)
+(pass 1 of 2 at Z-0.500 - follow with 05_level_deep for the rest)
 (path X -5..1200.8 Y -5..1159.1 = machine reach - 1mm)
 (coverage with this bit: X -17.7..1213.5 Y -17.7..1171.8)
 (SAFE START: full Z retract + XY move off the toolsetter)
@@ -10,7 +10,7 @@ G53 Z0
 G0 X-5.000 Y-5.000
 M3 S16000
 M8
-(pass 1 of 3 - Z-0.500)
+(pass 1 of 2 - Z-0.500)
 G0 Z6.00
 G0 X-5.000 Y-5.000
 G1 Z-0.500 F300
@@ -139,6 +139,12 @@ G1 Y1154.000 F2500
 G1 X-5.000 F2500
 G1 Y1159.134 F2500
 G1 X1200.814 F2500
+(edge lap - clears the turn waves on all sides)
+G1 X-5.000 F2500
+G1 Y-5.000 F2500
+G1 X1200.814 F2500
+G1 Y1159.134 F2500
+G1 X-5.000 F2500
 M5
 M9
 G53 Z0

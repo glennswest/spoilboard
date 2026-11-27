@@ -1,5 +1,25 @@
 # Changelog
 
+## [v0.9.0] — 2026-11-27
+
+### Added
+- **feat:** 11_level_cleanup - maintenance mow AT the existing
+  level (Z 0.000): shears raptor-nail stubs, tape and glue crumbs
+  flush without taking new material, so work Z0 stays valid (no
+  re-touch, no g54_z update). Surfacing bit: 03 before, 07 after.
+  `level.cleanup_doc` (default 0.0) turns it into a refresh skim
+  when set to 0.1+ - that DOES stale the zero.
+- **feat:** edge lap on every leveling serpentine (04, 05, 11) -
+  one continuous perimeter pass runs LAST at each depth, erasing
+  the serpentine turnaround scallops (the wave pattern) on all
+  four sides of the window.
+
+### Changed
+- **feat:** leveling is now TWO layers (passes 3 -> 2, 0.5 each,
+  1.0 total per resurface) - the spoilboard budget lasts 50%
+  longer per skim. 05_level_deep is now just pass 2;
+  06_level_edges follows automatically.
+
 ## [v0.8.0] — 2026-11-23
 
 ### Added

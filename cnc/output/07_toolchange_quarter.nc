@@ -1,4 +1,4 @@
-(07_toolchange_quarter - spoilboard v0.8.0)
+(07_toolchange_quarter - spoilboard v0.9.0)
 (M6 swap to T1 = 1/4in 6.35mm end mill - the everything bit)
 (TOOLSETTER measures the new bit - work Z0 is kept)
 (do NOT re-touch Z after this file)

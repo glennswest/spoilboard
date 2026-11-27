@@ -1,8 +1,8 @@
-(06_level_edges - spoilboard v0.8.0)
+(06_level_edges - spoilboard v0.9.0)
 (SURFACING bit d25.4 - side touch-up, front-to-back passes)
 (Z0 = the SAME leveling zero as 04_level)
 (left strip covers X -17.7..26.7; right strip X 1150.1..1213.5)
-(3 passes of 0.5 = 1.5 total - matches 04_level)
+(2 passes of 0.5 = 1.0 total - matches 04_level)
 (SAFE START: full Z retract + XY move off the toolsetter)
 G21 G90 G94 G17
 G53 Z0
@@ -32,20 +32,6 @@ G1 Y-5.000 F2500
 G0 Z6.00
 G0 X1162.814 Y-5.000
 G1 Z-1.000 F300
-G1 Y1159.134 F2500
-G1 X1181.814 F2500
-G1 Y-5.000 F2500
-G1 X1200.814 F2500
-G1 Y1159.134 F2500
-G0 Z6.00
-G0 X-5.000 Y-5.000
-G1 Z-1.500 F300
-G1 Y1159.134 F2500
-G1 X14.000 F2500
-G1 Y-5.000 F2500
-G0 Z6.00
-G0 X1162.814 Y-5.000
-G1 Z-1.500 F300
 G1 Y1159.134 F2500
 G1 X1181.814 F2500
 G1 Y-5.000 F2500

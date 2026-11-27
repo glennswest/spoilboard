@@ -7,7 +7,7 @@ glennswest/thetable — everything that belongs to the machine rather
 than to any furniture project.
 
 ## Version
-- Current: **0.8.0**
+- Current: **0.9.0**
 - Version locations: this file, `CHANGELOG.md`, `cnc/generate.py`
 
 ## Cut files (`python3 cnc/generate.py` → `cnc/output/`, numbered
@@ -20,8 +20,15 @@ stick-ready; `python3 cnc/stick.py` → /Volumes/MASSO/spoilboard/)
   stock.t ACTUAL → regenerate; the actual feeds thetable layer_t.
 - 02_level_test — dry run of the leveling extents
 - 03_toolchange_surfacing / 07_toolchange_quarter — toolsetter M6
-- 04_level / 05_level_deep / 06_level_edges — the skim (3 × 0.5,
-  split so a finished pass is never repeated; SAME Z0 throughout)
+- 04_level / 05_level_deep / 06_level_edges — the skim (2 × 0.5,
+  split so a finished pass is never repeated; SAME Z0 throughout).
+  Every serpentine ends with a perimeter EDGE LAP that erases the
+  turnaround wave pattern on all four sides.
+- 11_level_cleanup — maintenance mow AT the existing level
+  (Z 0.000): shears raptor-nail stubs/tape/glue flush, takes no
+  new material, work Z0 stays VALID (no re-touch). Surfacing bit:
+  run 03 before, 07 after. level.cleanup_doc 0.1+ = refresh skim
+  (that stales the zero — re-touch after).
 - 08_track_targets — M00 parks over the measured slot centers
 - 09_pins — fence pins + ¾″ dog holes + ∅9×15 M6 insert bores
 - 10_insert_guide — driver jig for the M6×13 inserts (cut ×2)

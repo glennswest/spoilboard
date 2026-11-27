@@ -15,12 +15,15 @@ stick's /spoilboard folder (cnc/stick.py does it).
   02_level_test         dry-run of the leveling extents, spindle off
   03_toolchange_surfacing  M6 -> T2 (1in surfacing) via toolsetter
   04_level              skim pass 1 (-0.5), full machine reach
-  05_level_deep         follow-on passes 2..3 - SAME Z0, no re-touch
-  06_level_edges        side strips, full 3-depth ladder
+  05_level_deep         follow-on pass 2 - SAME Z0, no re-touch
+  06_level_edges        side strips, full 2-depth ladder
   07_toolchange_quarter M6 -> T1 (1/4in) via toolsetter
   08_track_targets      parks over the 4 slot centers (M00 pauses)
   09_pins               fence pins + dog holes + M6 insert bores
   10_insert_guide       driver jig for the M6x13 inserts (cut x2)
+  11_level_cleanup      maintenance mow AT the existing level -
+                        shears raptor-nail stubs flush, Z0 stays
+                        valid (surfacing bit: 03 before, 07 after)
 
 Conventions (same as thetable): MASSO ISO dialect, Z0 = stock /
 spoilboard top, SAFE START (G53 Z0 -> XY -> only then Z down), every
@@ -30,7 +33,7 @@ spindle in reach. All dimensions mm. Pure Python 3, no deps.
 import math
 import os
 
-VERSION = "0.8.0"
+VERSION = "0.9.0"
 
 PARAMS = {
     # MACHINE (measured on the owner's Foreman Elite, 2026-11-11/12)
@@ -60,11 +63,15 @@ PARAMS = {
     # and supply the ACTUAL mic'd thickness - update t, regenerate;
     # that actual also feeds thetable's layer_t/ply_t.
     "stock": {"t": 19.05},
-    # leveling: 1in surfacing bit, 3 passes of 0.5 (split into
-    # 03 = pass 1 and 04 = passes 2..3 so a finished first pass is
-    # never repeated)
+    # leveling: 1in surfacing bit, 2 passes of 0.5 (split into
+    # 04 = pass 1 and 05 = pass 2 so a finished first pass is
+    # never repeated). cleanup_doc drives 11_level_cleanup: 0.0 =
+    # mow AT the existing level (shears raptor-nail stubs flush,
+    # work Z0 stays valid); set 0.1+ for a refresh skim - that
+    # DOES stale the zero (re-touch, update g54_z, regenerate)
     "level": {"tool_d": 25.4, "stepover": 19.0, "doc": 0.5,
-              "passes": 3, "feed": 2500.0, "rpm": 16000},
+              "passes": 2, "feed": 2500.0, "rpm": 16000,
+              "cleanup_doc": 0.0},
     # tool table (F4): T1 = 1/4in end mill, T2 = 1in surfacing
     "gcode": {"tool_d": 6.35, "feed": 1800.0, "plunge": 500.0,
               "rpm": 18000, "stepdown": 4.0, "safe_z": 6.0,
@@ -99,13 +106,14 @@ def _level_window():
     return (0.0, 0.0, cn["bed"], cn["bed"])
 
 
-def _level_serp(p):
-    """One full serpentine of the level window at pass depth p*doc."""
+def _level_serp(z, label):
+    """One full serpentine of the level window at depth z (<= 0)."""
+    z = z if z else 0.0  # kill -0.0
     G = PARAMS["level"]
     x0, y0, rx, ry = _level_window()
-    L = [f"(pass {p} of {G['passes']} - Z{-p * G['doc']:.3f})",
+    L = [f"({label} - Z{z:.3f})",
          "G0 Z6.00", f"G0 X{x0:.3f} Y{y0:.3f}",
-         f"G1 Z{-p * G['doc']:.3f} F300"]
+         f"G1 Z{z:.3f} F300"]
     y, left = y0, False
     while True:
         L.append(f"G1 X{x0 if left else rx:.3f} F{G['feed']:.0f}")
@@ -117,6 +125,15 @@ def _level_serp(p):
         else:
             break
         L.append(f"G1 Y{y:.3f} F{G['feed']:.0f}")
+    # perimeter lap LAST: one continuous pass around all four
+    # sides erases the serpentine turnaround scallops - the wave
+    # pattern - at every edge of the window
+    L += ["(edge lap - clears the turn waves on all sides)",
+          f"G1 X{x0:.3f} F{G['feed']:.0f}",
+          f"G1 Y{y0:.3f} F{G['feed']:.0f}",
+          f"G1 X{rx:.3f} F{G['feed']:.0f}",
+          f"G1 Y{ry:.3f} F{G['feed']:.0f}",
+          f"G1 X{x0:.3f} F{G['feed']:.0f}"]
     return L
 
 
@@ -214,7 +231,7 @@ def write_level():
           "G53 Z0",
           f"G0 X{x0:.3f} Y{y0:.3f}",
           f"M3 S{G['rpm']:.0f}", "M8"]
-    L += _level_serp(1)
+    L += _level_serp(-G["doc"], f"pass 1 of {G['passes']}")
     L += ["M5", "M9"] + _park() + ["M30"]
     _write("04_level", L)
 
@@ -227,9 +244,10 @@ def write_level_deep():
     doc = G["doc"]
     depths = ", ".join("%.1f" % (-p * doc)
                        for p in range(2, G["passes"] + 1))
+    tail = ("pass 2" if G["passes"] == 2
+            else f"passes 2..{G['passes']}")
     L = _hdr("05_level_deep", [
-        f"SURFACING bit d{G['tool_d']:.1f} - follow-on passes "
-        f"2..{G['passes']}",
+        f"SURFACING bit d{G['tool_d']:.1f} - follow-on {tail}",
         "SAME Z0 as 04_level - do NOT re-touch Z between the files",
         f"depths {depths} -> {G['passes'] * doc:.1f} total below Z0",
         "SAFE START: full Z retract + XY move off the toolsetter"])
@@ -238,7 +256,7 @@ def write_level_deep():
           f"G0 X{x0:.3f} Y{y0:.3f}",
           f"M3 S{G['rpm']:.0f}", "M8"]
     for p in range(2, G["passes"] + 1):
-        L += _level_serp(p)
+        L += _level_serp(-p * doc, f"pass {p} of {G['passes']}")
     L += ["M5", "M9"] + _park() + ["M30"]
     _write("05_level_deep", L)
 
@@ -554,6 +572,31 @@ def write_insert_guide():
     _write(name, L)
 
 
+def write_level_cleanup():
+    G = PARAMS["level"]
+    cz = -G["cleanup_doc"] if G["cleanup_doc"] else 0.0
+    x0, y0, rx, ry = _level_window()
+    L = _hdr("11_level_cleanup", [
+        f"SURFACING bit d{G['tool_d']:.1f} - run "
+        "03_toolchange_surfacing first, 07 after to get T1 back",
+        "MAINTENANCE mow of the EXISTING level - shears raptor-",
+        "nail stubs, tape and glue crumbs flush with the surface",
+        f"single pass at Z{cz:.3f} = the CURRENT spoilboard top:",
+        "work Z0 stays VALID - no re-touch, no g54_z update, no",
+        "regenerate; run it any time the board grows stubble",
+        "for a refresh SKIM instead set level.cleanup_doc to 0.1",
+        "or more + regenerate - that DOES stale the zero: re-touch",
+        "Z0 must be the spoilboard surface (00_set_work_zero)",
+        "SAFE START: full Z retract + XY move off the toolsetter"])
+    L += ["G21 G90 G94 G17",
+          "G53 Z0",
+          f"G0 X{x0:.3f} Y{y0:.3f}",
+          f"M3 S{G['rpm']:.0f}", "M8"]
+    L += _level_serp(cz, "cleanup - existing level")
+    L += ["M5", "M9"] + _park() + ["M30"]
+    _write("11_level_cleanup", L)
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     print(f"spoilboard v{VERSION}")
@@ -566,4 +609,5 @@ if __name__ == "__main__":
     write_track_targets()
     write_pins()
     write_insert_guide()
+    write_level_cleanup()
     print("done -> cnc/output/")
